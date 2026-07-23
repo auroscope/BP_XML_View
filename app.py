@@ -1722,7 +1722,7 @@ def view_document(filename, source, doc_id):
             ext = extracted_filename.split('.')[-1].lower() if '.' in extracted_filename else doc_type
             
             # Handle TIF conversion for browser compatibility
-            if ext in ['tif', 'tiff']:
+            if ext in ['tif', 'tiff', 'mtif']:
                 try:
                     img = Image.open(io.BytesIO(file_bytes))
                     img_io = io.BytesIO()
@@ -1837,7 +1837,7 @@ def view_document(filename, source, doc_id):
                 ext = extracted_filename.split('.')[-1].lower() if '.' in extracted_filename else doc_type
                 
                 # Handle TIF
-                if ext in ['tif', 'tiff']:
+                if ext in ['tif', 'tiff', 'mtif']:
                     try:
                         img = Image.open(io.BytesIO(file_bytes))
                         img_io = io.BytesIO()
