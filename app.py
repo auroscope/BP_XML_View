@@ -1439,6 +1439,27 @@ VIEWER_TEMPLATE = """
             {% endif %}
         </div>
     </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.querySelector('.sidebar-pane');
+            if (sidebar) {
+                const filename = "{{ filename }}";
+                const scrollKey = 'sidebar-scroll-' + filename;
+                
+                // Restore scroll position
+                const savedScroll = sessionStorage.getItem(scrollKey);
+                if (savedScroll) {
+                    sidebar.scrollTop = parseInt(savedScroll, 10);
+                }
+                
+                // Save scroll position on scroll
+                sidebar.addEventListener('scroll', function() {
+                    sessionStorage.setItem(scrollKey, sidebar.scrollTop);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 """
