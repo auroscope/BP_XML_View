@@ -1485,21 +1485,82 @@ VIEWER_TEMPLATE = """
 
         document.addEventListener("DOMContentLoaded", function() {
             const sidebar = document.querySelector('.sidebar-pane');
+            const filename = "{{ filename }}";
+            const scrollKey = 'sidebar-scroll-' + filename;
+            const checkedKey = 'checked-docs-' + filename;
+            const selectAllCheckbox = document.getElementById('select-all-viewer');
+            const deleteForm = document.getElementById('delete-viewer-form');
+
+            // 1. Restore scroll position
             if (sidebar) {
-                const filename = "{{ filename }}";
-                const scrollKey = 'sidebar-scroll-' + filename;
-                
-                // Restore scroll position
                 const savedScroll = sessionStorage.getItem(scrollKey);
                 if (savedScroll) {
                     sidebar.scrollTop = parseInt(savedScroll, 10);
                 }
-                
-                // Save scroll position on scroll
                 sidebar.addEventListener('scroll', function() {
                     sessionStorage.setItem(scrollKey, sidebar.scrollTop);
                 });
             }
+
+            // 2. Function to save checked state
+            function saveCheckedState() {
+                const checkedValues = [];
+                const checkboxes = document.querySelectorAll('#viewer-doc-list input[name="selected_items"]');
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        checkedValues.push(cb.value);
+                    }
+                });
+                sessionStorage.setItem(checkedKey, JSON.stringify(checkedValues));
+                
+                // Update Select All checkbox state dynamically
+                if (selectAllCheckbox && checkboxes.length > 0) {
+                    const checkedCount = checkedValues.length;
+                    selectAllCheckbox.checked = (checkedCount === checkboxes.length);
+                    selectAllCheckbox.indeterminate = (checkedCount > 0 && checkedCount < checkboxes.length);
+                }
+            }
+
+            // 3. Function to restore checked state
+            function restoreCheckedState() {
+                const saved = sessionStorage.getItem(checkedKey);
+                const checkboxes = document.querySelectorAll('#viewer-doc-list input[name="selected_items"]');
+                if (saved && checkboxes.length > 0) {
+                    const checkedValues = JSON.parse(saved);
+                    checkboxes.forEach(cb => {
+                        if (checkedValues.includes(cb.value)) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+                
+                // Initial update of Select All checkbox
+                if (selectAllCheckbox && checkboxes.length > 0) {
+                    const checkedCount = document.querySelectorAll('#viewer-doc-list input[name="selected_items"]:checked').length;
+                    selectAllCheckbox.checked = (checkedCount === checkboxes.length);
+                    selectAllCheckbox.indeterminate = (checkedCount > 0 && checkedCount < checkboxes.length);
+                }
+            }
+
+            // 4. Register event listeners for checkboxes
+            const listCheckboxes = document.querySelectorAll('#viewer-doc-list input[name="selected_items"]');
+            listCheckboxes.forEach(cb => {
+                cb.addEventListener('change', saveCheckedState);
+            });
+
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', saveCheckedState);
+            }
+
+            // 5. Clear stored checked states upon form submission (deletion)
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', function() {
+                    sessionStorage.removeItem(checkedKey);
+                });
+            }
+
+            // 6. Run restore
+            restoreCheckedState();
         });
     </script>
 </body>
