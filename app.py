@@ -1586,6 +1586,20 @@ CHARTS_TEMPLATE = """
         .chart-meta { font-size: 0.9rem; color: #6c757d; text-align: right; }
         
         canvas { width: 100% !important; height: 350px !important; }
+        
+        @media print {
+            .header { display: none !important; }
+            body { background: white; color: black; padding: 0; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            .chart-card { 
+                page-break-inside: avoid !important; 
+                break-inside: avoid !important; 
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                margin-bottom: 30px !important;
+                padding: 15px !important;
+            }
+        }
     </style>
 </head>
 <body>
