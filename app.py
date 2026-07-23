@@ -390,6 +390,25 @@ def delete_items(filename):
     return redirect(url_for('view_patient', filename=filename))
 
 # --- Utilities ---
+@app.route('/patient/<filename>/download')
+def download_edited_xml(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(filename))
+    if not os.path.exists(filepath):
+        return "File not found.", 404
+    
+    # Extract filename and construct new download name
+    base_name = filename
+    if base_name.lower().endswith('.xml'):
+        base_name = base_name[:-4]
+    download_name = f"{base_name}_edited.xml"
+    
+    return send_file(
+        filepath,
+        mimetype='application/xml',
+        as_attachment=True,
+        download_name=download_name
+    )
+
 def get_text(node, path):
     if node is None: return ''
     el = node.find(path)
@@ -862,6 +881,7 @@ HTML_TEMPLATE = """
             </div>
             <div class="file-actions">
                 <a href="{{ url_for('view_patient', filename=file) }}" class="btn btn-xs">Open</a>
+                <a href="/patient/{{ file }}/download" class="btn btn-xs" style="background-color: #28a745;">Download</a>
                 <form action="{{ url_for('delete_file', filename=file) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this record?')">
                     <button type="submit" class="btn btn-danger btn-xs">Delete</button>
                 </form>
@@ -985,6 +1005,7 @@ PATIENT_TEMPLATE = """
     <div class="content">
         <div class="global-controls">
             <h1>Patient Dashboard: {{ data.demographics.first_name }} {{ data.demographics.surname }}</h1>
+            <a href="/patient/{{ filename }}/download" class="btn-sm" style="background-color: #28a745; color: white; border: none; font-weight: bold; margin-right: 5px; text-decoration: none;">Download Edited XML</a>
             <button class="btn-sm" onclick="expandAll()">Expand All</button>
             <button class="btn-sm" onclick="collapseAll()">Collapse All</button>
             <button type="submit" form="delete-form" class="btn-sm" style="background-color: #dc3545; color: white; border: none; font-weight: bold; margin-left: 10px; cursor: pointer; padding: 6px 12px;">Delete Selected</button>
