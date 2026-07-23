@@ -1484,7 +1484,7 @@ VIEWER_TEMPLATE = """
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            const sidebar = document.querySelector('.sidebar-pane');
+            const sidebar = document.getElementById('viewer-doc-list');
             const filename = "{{ filename }}";
             const scrollKey = 'sidebar-scroll-' + filename;
             const checkedKey = 'checked-docs-' + filename;
