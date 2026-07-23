@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+working/*
+!working/.gitkeep
+*.bak
+*.pyc
