@@ -1046,7 +1046,7 @@ PATIENT_TEMPLATE = """
 
             <div id="allergies" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Allergies & Reactions</h2>
+                    <h2>Allergies & Reactions ({{ data.allergies|length if data.allergies else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'allergies-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1071,7 +1071,7 @@ PATIENT_TEMPLATE = """
 
             <div id="history" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Past Medical History</h2>
+                    <h2>Past Medical History ({{ data.history|length if data.history else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'history-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1097,7 +1097,7 @@ PATIENT_TEMPLATE = """
 
             <div id="medications" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Current Medications</h2>
+                    <h2>Current Medications ({{ data.medications_current|length if data.medications_current else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'medications-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1126,7 +1126,7 @@ PATIENT_TEMPLATE = """
 
             <div id="medications-past" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Past / Ceased Medications</h2>
+                    <h2>Past / Ceased Medications ({{ data.medications_past|length if data.medications_past else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'medications-past-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1159,7 +1159,7 @@ PATIENT_TEMPLATE = """
 
             <div id="visits" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Clinical Visits</h2>
+                    <h2>Clinical Visits ({{ data.visits|length if data.visits else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'visits-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1185,7 +1185,7 @@ PATIENT_TEMPLATE = """
 
             <div id="pathology" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)" style="display: flex; align-items: center;">
-                    <h2 style="flex-grow: 0; margin-right: 15px;">Pathology Results (Atomized)</h2>
+                    <h2 style="flex-grow: 0; margin-right: 15px;">Pathology Results (Atomized) ({{ data.results|length if data.results else 0 }})</h2>
                     <a href="{{ url_for('view_charts', filename=filename) }}" class="btn-sm" style="background-color: #17a2b8; color: white; border: none; text-decoration: none; margin-right: 15px;" onclick="event.stopPropagation();">
                         View Clinical Trends &rarr;
                     </a>
@@ -1220,7 +1220,7 @@ PATIENT_TEMPLATE = """
 
             <div id="investigations" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Non-Atomized Pathology / Clinical Reports</h2>
+                    <h2>Non-Atomized Pathology / Clinical Reports ({{ data.investigations|length if data.investigations else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'investigations-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1249,7 +1249,7 @@ PATIENT_TEMPLATE = """
 
             <div id="correspondence" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Outward Correspondence (Referrals/Letters)</h2>
+                    <h2>Outward Correspondence (Referrals/Letters) ({{ data.correspondence|length if data.correspondence else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'correspondence-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
@@ -1278,7 +1278,7 @@ PATIENT_TEMPLATE = """
 
             <div id="documents" class="card collapsed">
                 <div class="card-header" onclick="toggleCard(this)">
-                    <h2>Documents</h2>
+                    <h2>Documents ({{ data.documents|length if data.documents else 0 }})</h2>
                     <input type="checkbox" onclick="event.stopPropagation(); toggleSectionSelect(this, 'documents-table')" style="margin-right: 5px; transform: scale(1.2);">
                     <span style="font-size: 0.85rem; color: #6c757d; margin-right: 15px;" onclick="event.stopPropagation();">Select All</span>
                     <span class="toggle-icon">&#x25BE;</span>
