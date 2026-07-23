@@ -1402,45 +1402,87 @@ VIEWER_TEMPLATE = """
             {% for d in data.correspondence %}{% if d.id == active_id %}{% set ns.section = 'correspondence' %}{% endif %}{% endfor %}
             {% for d in data.investigations %}{% if d.id == active_id %}{% set ns.section = 'investigation' %}{% endif %}{% endfor %}
             
-            {% if ns.section == 'correspondence' %}
-            <div class="sidebar-header">Outward Correspondence ({{ data.correspondence|length }})</div>
-            {% for doc in data.correspondence %}
-            <a href="/patient/{{ filename }}/viewer/{{ doc.source }}/{{ doc.id }}" 
-               class="doc-item {% if doc.id == active_id %}active{% endif %}">
-                <span class="doc-date">{{ doc.date }}</span>
-                <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject }}</span>
-                <span class="doc-provider">To: {{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
-            </a>
-            {% endfor %}
-            {% endif %}
-            
-            {% if ns.section == 'investigation' %}
-            <div class="sidebar-header">Pathology & Reports ({{ data.investigations|length }})</div>
-            {% for doc in data.investigations %}
-            <a href="/patient/{{ filename }}/viewer/{{ doc.source }}/{{ doc.id }}" 
-               class="doc-item {% if doc.id == active_id %}active{% endif %}">
-                <span class="doc-date">{{ doc.date }}</span>
-                <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject }}</span>
-                <span class="doc-provider">{{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
-            </a>
-            {% endfor %}
-            {% endif %}
-            
-            {% if ns.section == 'document' %}
-            <div class="sidebar-header">Documents & Images ({{ data.documents|length }})</div>
-            {% for doc in data.documents %}
-            <a href="/patient/{{ filename }}/viewer/{{ doc.source }}/{{ doc.id }}" 
-               class="doc-item {% if doc.id == active_id %}active{% endif %}">
-                <span class="doc-date">{{ doc.date }}</span>
-                <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject if doc.subject and doc.subject != 'NIL' else doc.category }}</span>
-                <span class="doc-provider">{{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
-            </a>
-            {% endfor %}
-            {% endif %}
+            <form id="delete-viewer-form" action="/patient/{{ filename }}/delete" method="POST" style="display: flex; flex-direction: column; height: 100%; margin: 0;">
+                
+                <!-- Selection & Deletion Header Toolbar -->
+                <div style="padding: 12px 15px; border-bottom: 1px solid #dee2e6; background: #f8f9fa; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <input type="checkbox" id="select-all-viewer" onclick="toggleViewerSelect(this)" style="transform: scale(1.1); cursor: pointer;">
+                        <label for="select-all-viewer" style="font-size: 0.85rem; color: #495057; font-weight: bold; cursor: pointer; user-select: none;">Select All</label>
+                    </div>
+                    <button type="submit" class="btn-sm" style="background-color: #dc3545; color: white; border: none; font-weight: bold; cursor: pointer; padding: 4px 8px; font-size: 0.8em; border-radius: 4px;">Delete Selected</button>
+                </div>
+                
+                <!-- Document List Container -->
+                <div id="viewer-doc-list" style="overflow-y: auto; flex-grow: 1;">
+                    {% if ns.section == 'correspondence' %}
+                    <div class="sidebar-header">Outward Correspondence ({{ data.correspondence|length }})</div>
+                    {% for doc in data.correspondence %}
+                    <a href="/patient/{{ filename }}/viewer/{{ doc.source }}/{{ doc.id }}" 
+                       class="doc-item {% if doc.id == active_id %}active{% endif %}"
+                       style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="checkbox" name="selected_items" value="correspondence:{{ doc.id }}" 
+                               onclick="event.stopPropagation();" 
+                               style="transform: scale(1.1); margin-top: 3px; cursor: pointer; flex-shrink: 0;">
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <span class="doc-date">{{ doc.date }}</span>
+                            <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject }}</span>
+                            <span class="doc-provider">To: {{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    {% if ns.section == 'investigation' %}
+                    <div class="sidebar-header">Pathology & Reports ({{ data.investigations|length }})</div>
+                    {% for doc in data.investigations %}
+                    <a href="/patient/{{ filename }}/viewer/{{ doc.source }}/{{ doc.id }}" 
+                       class="doc-item {% if doc.id == active_id %}active{% endif %}"
+                       style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="checkbox" name="selected_items" value="investigations:{{ loop.index0 }}" 
+                               onclick="event.stopPropagation();" 
+                               style="transform: scale(1.1); margin-top: 3px; cursor: pointer; flex-shrink: 0;">
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <span class="doc-date">{{ doc.date }}</span>
+                            <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject }}</span>
+                            <span class="doc-provider">{{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    {% if ns.section == 'document' %}
+                    <div class="sidebar-header">Documents & Images ({{ data.documents|length }})</div>
+                    {% for doc in data.documents %}
+                    <a href="/patient/{{ filename }}/viewer/{{ doc.source }}/{{ doc.id }}" 
+                       class="doc-item {% if doc.id == active_id %}active{% endif %}"
+                       style="display: flex; align-items: flex-start; gap: 10px;">
+                        <input type="checkbox" name="selected_items" value="documents:{{ doc.id }}" 
+                               onclick="event.stopPropagation();" 
+                               style="transform: scale(1.1); margin-top: 3px; cursor: pointer; flex-shrink: 0;">
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <span class="doc-date">{{ doc.date }}</span>
+                            <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject if doc.subject and doc.subject != 'NIL' else doc.category }}</span>
+                            <span class="doc-provider">{{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </form>
         </div>
     </div>
     
     <script>
+        function toggleViewerSelect(headerCheckbox) {
+            const listContainer = document.getElementById('viewer-doc-list');
+            if (!listContainer) return;
+            const checkboxes = listContainer.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = headerCheckbox.checked;
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             const sidebar = document.querySelector('.sidebar-pane');
             if (sidebar) {
