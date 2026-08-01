@@ -469,6 +469,20 @@ def normalize_date(date_str):
         return f"{day}/{month}/{year}"
     return date_str
 
+def format_size(size_bytes):
+    if size_bytes is None:
+        return "N/A"
+    try:
+        size_bytes = int(size_bytes)
+    except (ValueError, TypeError):
+        return "N/A"
+    if size_bytes >= 1024 * 1024:
+        return f"{size_bytes / (1024 * 1024):.1f} MB"
+    elif size_bytes >= 1024:
+        return f"{size_bytes / 1024:.1f} KB"
+    else:
+        return f"{size_bytes} B" 
+
 # --- XML Extraction Logic ---
 
 def parse_ehr_xml(filepath):
@@ -597,6 +611,14 @@ def parse_ehr_xml(filepath):
             doc_type = get_text(page, 'DocType').strip() if page is not None else 'Unknown'
             file_name = get_text(page, 'FileName').strip() if page is not None else ''
             
+            size_str = 'N/A'
+            if page is not None:
+                content_node = page.find('Content')
+                if content_node is not None and content_node.text:
+                    b64_len = len(content_node.text.strip())
+                    approx_bytes = (b64_len * 3) // 4
+                    size_str = format_size(approx_bytes)
+
             documents.append({
                 'id': doc_id,
                 'source': 'document',
@@ -605,7 +627,8 @@ def parse_ehr_xml(filepath):
                 'category': get_text(doc, 'CATEGORY'),
                 'subject': get_text(doc, 'SUBJECT'),
                 'type': doc_type,
-                'filename': file_name
+                'filename': file_name,
+                'size': size_str
             })
             
         for inv in root.findall('.//Investigation'):
@@ -618,6 +641,13 @@ def parse_ehr_xml(filepath):
                     doc_type = get_text(page, 'DocType').strip()
                     file_name = get_text(page, 'FileName').strip()
                     
+                    size_str = 'N/A'
+                    content_node = page.find('Content')
+                    if content_node is not None and content_node.text:
+                        b64_len = len(content_node.text.strip())
+                        approx_bytes = (b64_len * 3) // 4
+                        size_str = format_size(approx_bytes)
+
                     documents.append({
                         'id': inv_id,
                         'source': 'investigation',
@@ -626,7 +656,8 @@ def parse_ehr_xml(filepath):
                         'category': 'Report / Image',
                         'subject': get_text(inv, 'TESTNAME'),
                         'type': doc_type,
-                        'filename': file_name
+                        'filename': file_name,
+                        'size': size_str
                     })
                 else:
                     investigations.append({
@@ -772,6 +803,13 @@ def parse_ehr_xml(filepath):
             doc_type = get_text(doc, 'DOCTYPE').strip()
             file_name = get_text(doc, 'FILENAME').strip()
             
+            size_str = 'N/A'
+            content_node = doc.find('BASE64_DATA')
+            if content_node is not None and content_node.text:
+                b64_len = len(content_node.text.strip())
+                approx_bytes = (b64_len * 3) // 4
+                size_str = format_size(approx_bytes)
+
             documents.append({
                 'id': doc_id,
                 'source': 'document',
@@ -780,7 +818,8 @@ def parse_ehr_xml(filepath):
                 'category': get_text(doc, 'DOCTYPE'),
                 'subject': get_text(doc, 'DOCTITLE'),
                 'type': doc_type,
-                'filename': file_name
+                'filename': file_name,
+                'size': size_str
             })
 
         correspondence = []
@@ -1286,7 +1325,7 @@ PATIENT_TEMPLATE = """
                 <div class="card-content">
                     {% if data.documents %}
                     <table id="documents-table">
-                        <tr><th style="width: 40px; text-align: center;">Select</th><th style="width: 100px;">Date</th><th>Provider</th><th>Category</th><th>Subject</th><th>Type</th><th style="text-align: center;">Action</th></tr>
+                        <tr><th style="width: 40px; text-align: center;">Select</th><th style="width: 100px;">Date</th><th>Provider</th><th>Category</th><th>Subject</th><th>Type</th><th>Size</th><th style="text-align: center;">Action</th></tr>
                         {% for item in data.documents %}
                         <tr>
                             <td style="text-align: center;"><input type="checkbox" name="selected_items" value="documents:{{ item.id }}"></td>
@@ -1295,6 +1334,7 @@ PATIENT_TEMPLATE = """
                             <td>{{ item.category }}</td>
                             <td style="color: #495057;">{{ item.subject if item.subject and item.subject != 'NIL' else '' }}</td>
                             <td style="color: #6c757d; font-size: 0.9em; text-transform: uppercase;">{{ item.type }}</td>
+                            <td style="color: #6c757d; font-size: 0.9em;">{{ item.size if item.size else 'N/A' }}</td>
                             <td style="text-align: center; white-space: nowrap;">
                                 <a href="/patient/{{ filename }}/viewer/{{ item.source }}/{{ item.id }}" target="_blank" class="btn-sm" style="text-decoration: none;">View File</a>
                             </td>
