@@ -57,3 +57,12 @@ plans/
 .DS_Store?
 Thumbs.db
 ehthumbs.db
+
+# --- Security Certificates & Private Keys ---
+# Ignores SSL/TLS certificates, self-signed certs, and private keys
+*.pem
+*.crt
+*.key
+*.pfx
+*.p12
+*.pub
