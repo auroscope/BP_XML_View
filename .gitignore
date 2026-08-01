@@ -1,6 +1,59 @@
+# ==========================================
+# BPSXMLViewer - Production Open Source .gitignore
+# ==========================================
+
+# --- Python & Virtual Environments ---
 .venv/
+venv/
+env/
+ENV/
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# --- Application Runtime & Patient Data ---
+# Ignores all temporary XML, TIF, and decrypted patient data
 working/*
 !working/.gitkeep
 *.bak
-*.pyc
+*.log
+
+# --- Credentials, API Keys, & Local Configuration ---
+# Prevents any accidental leaks of secrets/keys
+.env
+.env.local
+.env.*
+instance/
+secrets.json
+config.py
+!config.py.example
+
+# --- Documentation & Early Planning Docs ---
+# As requested, ignores early project plans and proposals
+plans/
+
+# --- Large Binaries & External Resources ---
+# Ignores Tesseract OCR trained data files
+*.traineddata
+
+# --- IDE & Developer Tools Configurations ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- OS-generated Files ---
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
