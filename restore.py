@@ -1,6 +1,6 @@
 import re
 
-with open('/home/tony/BPSXMLViewer/app.py', 'r') as f:
+with open('app.py', 'r') as f:
     lines = f.readlines()
 
 new_lines = []
@@ -14,5 +14,5 @@ for line in lines:
     if not skip:
         new_lines.append(line)
 
-with open('/home/tony/BPSXMLViewer/app.py', 'w') as f:
+with open('app.py', 'w') as f:
     f.writelines(new_lines)

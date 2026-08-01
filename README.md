@@ -1,6 +1,6 @@
-# BPSXMLViewer (Best Practice Software XML Viewer)
+# BP_XML_View (Best Practice Software XML Viewer)
 
-BPSXMLViewer is a lightweight, high-performance Python Flask application designed to parse, display, manage, and edit patient Electronic Health Record (EHR) XML payloads exported from **Best Practice Software (BPSEHRV2)**. 
+BP_XML_View is a lightweight, high-performance Python Flask application designed to parse, display, manage, and edit patient Electronic Health Record (EHR) XML payloads exported from **Best Practice Software (BPSEHRV2)**. 
 
 The application utilizes a secure, serverless file-based approach. It treats the uploaded patient XML files themselves as the primary data store, dynamically parsing and writing modifications directly back to the files. It handles complex healthcare datasets, dynamic binary extraction from base64 ZIP archives, RTF parsing into clean HTML tables, image conversions (TIF to browser-renderable formats), and clinical observations visualization.
 
@@ -31,7 +31,7 @@ The application tracks historical clinical markers and maps them to standard **L
 * **Print Optimization:** Formatted with tailored CSS media queries to ensure clean print layouts without broken charts or cutoffs.
 
 ### 4. **EHR Editing & Deletion**
-Unlike static viewers, BPSXMLViewer allows clinicians or administrative staff to manage patient data directly:
+Unlike static viewers, BP_XML_View allows clinicians or administrative staff to manage patient data directly:
 * **Interactive Deletion:** Select individual clinical items (vitals, medications, allergies, discrete results, reports, or letters) to delete.
 * **Bulk Document Deletion:** Multi-select and remove multiple base64-encoded binary documents in the document viewer sidebar.
 * **State Persistence:** Sidebar states and checkbox selections are preserved across page refreshes.
@@ -41,7 +41,7 @@ Unlike static viewers, BPSXMLViewer allows clinicians or administrative staff to
 
 ## 🛠️ Architecture
 
-BPSXMLViewer is built using a minimal, modular tech stack:
+BP_XML_View is built using a minimal, modular tech stack:
 * **Backend:** Flask (Python 3.13)
 * **Frontend:** Vanilla HTML5, CSS3, and JavaScript, with Chart.js for data visualization.
 * **EHR Processing:** `xml.etree.ElementTree` for tree traversal and modification, and `re` for schema sanitization.
@@ -59,8 +59,8 @@ BPSXMLViewer is built using a minimal, modular tech stack:
 
 ### **1. Clone the Repository**
 ```bash
-git clone https://github.com/boonahmedical/BPSXMLViewer.git
-cd BPSXMLViewer
+git clone https://github.com/auroscope/BP_XML_View.git
+cd BP_XML_View
 ```
 
 ### **2. Setup Virtual Environment & Install Dependencies**
@@ -82,20 +82,20 @@ Open [http://localhost:5007](http://localhost:5007) in your browser.
 
 ## 🖥️ Production Deployment (systemd + Gunicorn)
 
-To run BPSXMLViewer as a system service on Ubuntu/Debian:
+To run BP_XML_View as a system service on Ubuntu/Debian:
 
-1. Create a service file at `/etc/systemd/system/bpsxmlviewer.service`:
+1. Create a service file at `/etc/systemd/system/bp_xml_view.service`:
    ```ini
    [Unit]
-   Description=Gunicorn instance to serve BPSXMLViewer Flask App
+   Description=Gunicorn instance to serve BP_XML_View Flask App
    After=network.target
 
    [Service]
    User=root
    Group=root
-   WorkingDirectory=/home/tony/BPSXMLViewer
-   Environment="PATH=/home/tony/BPSXMLViewer/.venv/bin"
-   ExecStart=/home/tony/BPSXMLViewer/.venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5007 app:app
+   WorkingDirectory=/path/to/BP_XML_View
+   Environment="PATH=/path/to/BP_XML_View/.venv/bin"
+   ExecStart=/path/to/BP_XML_View/.venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5007 app:app
 
    [Install]
    WantedBy=multi-user.target
@@ -104,13 +104,13 @@ To run BPSXMLViewer as a system service on Ubuntu/Debian:
 2. Enable and start the system service:
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl enable bpsxmlviewer.service
-   sudo systemctl start bpsxmlviewer.service
+   sudo systemctl enable bp_xml_view.service
+   sudo systemctl start bp_xml_view.service
    ```
 
 3. Check service status:
    ```bash
-   sudo systemctl status bpsxmlviewer.service
+   sudo systemctl status bp_xml_view.service
    ```
 
 ---
