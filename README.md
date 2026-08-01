@@ -4,6 +4,12 @@ BP_XML_View is a lightweight, high-performance Python Flask application designed
 
 The application utilizes a secure, serverless file-based approach. It treats the uploaded patient XML files themselves as the primary data store, dynamically parsing and writing modifications directly back to the files. It handles complex healthcare datasets, dynamic binary extraction from base64 ZIP archives, RTF parsing into clean HTML tables, image conversions (TIF to browser-renderable formats), and clinical observations visualization.
 
+## 🎯 Primary Use Case
+
+The primary use case for this application is to examine and allow **selective deletion** of content within a Best Practice Software XML patient export file. 
+
+During clinical data migrations, patient transfers, or record sharing, XML export files can contain unnecessary, low-value, or bloated documents (such as multi-megabyte scanning outputs or redundant administrative paperwork). By using this application to review and selectively delete these items from the XML payload *prior* to import, users can prevent database bloat and ensure that only clean, high-value clinical content is imported into their local **Best Practice Database**.
+
 ---
 
 ## 🚀 Key Features
