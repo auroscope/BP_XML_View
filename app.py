@@ -660,13 +660,16 @@ def parse_ehr_xml(filepath):
                         'size': size_str
                     })
                 else:
+                    rtf_body = get_text(inv, 'REPORTBODY') or ''
+                    size_str = format_size(len(rtf_body))
                     investigations.append({
                         'id': inv_id,
                         'source': 'investigation',
                         'date': get_text(inv, 'REPORTDATE'),
                         'provider': get_text(inv, 'PROVIDERNAME'),
                         'subject': get_text(inv, 'TESTNAME'),
-                        'type': 'rtf'
+                        'type': 'rtf',
+                        'size': size_str
                     })
 
         correspondence = []
@@ -676,6 +679,8 @@ def parse_ehr_xml(filepath):
             
             doc_type = get_text(corr, 'DOCTYPE').strip() if get_text(corr, 'DOCTYPE') else 'rtf'
             
+            rtf_content = get_text(corr, 'CONTENT') or ''
+            size_str = format_size(len(rtf_content))
             correspondence.append({
                 'id': corr_id,
                 'source': 'correspondence',
@@ -684,7 +689,8 @@ def parse_ehr_xml(filepath):
                 'category': 'Outgoing Letter',
                 'subject': get_text(corr, 'SUBJECT'),
                 'type': doc_type,
-                'filename': ''
+                'filename': '',
+                'size': size_str
             })
 
     else:
@@ -1465,7 +1471,7 @@ VIEWER_TEMPLATE = """
                                onclick="event.stopPropagation();" 
                                style="transform: scale(1.1); margin-top: 3px; cursor: pointer; flex-shrink: 0;">
                         <div style="flex-grow: 1; min-width: 0;">
-                            <span class="doc-date">{{ doc.date }}</span>
+                            <span class="doc-date">{{ doc.date }}{% if doc.size %} &nbsp;|&nbsp; {{ doc.size }}{% endif %}</span>
                             <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject }}</span>
                             <span class="doc-provider">To: {{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
                         </div>
@@ -1483,7 +1489,7 @@ VIEWER_TEMPLATE = """
                                onclick="event.stopPropagation();" 
                                style="transform: scale(1.1); margin-top: 3px; cursor: pointer; flex-shrink: 0;">
                         <div style="flex-grow: 1; min-width: 0;">
-                            <span class="doc-date">{{ doc.date }}</span>
+                            <span class="doc-date">{{ doc.date }}{% if doc.size %} &nbsp;|&nbsp; {{ doc.size }}{% endif %}</span>
                             <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject }}</span>
                             <span class="doc-provider">{{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
                         </div>
@@ -1501,7 +1507,7 @@ VIEWER_TEMPLATE = """
                                onclick="event.stopPropagation();" 
                                style="transform: scale(1.1); margin-top: 3px; cursor: pointer; flex-shrink: 0;">
                         <div style="flex-grow: 1; min-width: 0;">
-                            <span class="doc-date">{{ doc.date }}</span>
+                            <span class="doc-date">{{ doc.date }}{% if doc.size %} &nbsp;|&nbsp; {{ doc.size }}{% endif %}</span>
                             <span class="doc-subject" title="{{ doc.subject }}">{{ doc.subject if doc.subject and doc.subject != 'NIL' else doc.category }}</span>
                             <span class="doc-provider">{{ doc.provider if doc.provider and doc.provider != 'NIL' else 'Unknown' }}</span>
                         </div>
