@@ -82,7 +82,9 @@ Start the development server:
 ```bash
 python3 app.py
 ```
-Open [http://localhost:5007](http://localhost:5007) in your browser.
+Open [http://localhost:5002](http://localhost:5002) in your browser.
+
+*(Note: The built-in Flask development server runs on Port 5002 by default, while the Gunicorn production service is configured to bind to Port 5007).*
 
 ---
 
