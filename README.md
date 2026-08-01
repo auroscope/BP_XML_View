@@ -102,7 +102,7 @@ To run BP_XML_View as a system service on Ubuntu/Debian:
    Group=root
    WorkingDirectory=/path/to/BP_XML_View
    Environment="PATH=/path/to/BP_XML_View/.venv/bin"
-   ExecStart=/path/to/BP_XML_View/.venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5007 app:app
+   ExecStart=/path/to/BP_XML_View/.venv/bin/gunicorn --workers 3 --threads 3 --timeout 300 --bind 0.0.0.0:5007 app:app
 
    [Install]
    WantedBy=multi-user.target
