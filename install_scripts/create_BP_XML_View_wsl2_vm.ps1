@@ -1,5 +1,5 @@
 # Hardened WSL2 Ubuntu + SSH + BP_XML_View (Flask/gunicorn) provisioning script
-# Based on create_wsl2_ubuntu.ps1, extended to deploy https://github.com/auroscope/BP_XML_View.
+# Based on create_wsl2_ubuntu_sandbox.ps1, extended to deploy https://github.com/auroscope/BP_XML_View.
 # Run from an elevated PowerShell. Shortcut target:
 #   C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -ExecutionPolicy Bypass -File "<path-to-script>\create_BP_XML_View_wsl2_vm.ps1"
 
@@ -187,7 +187,7 @@ $AppHyperVRuleName = "WSL2 $DistroName $AppName (TCP $AppPort, Hyper-V)"
 
 $NewUser =Read-Host "Linux username [$DefaultUser]"
 if ([string]::IsNullOrWhiteSpace($NewUser)) { $NewUser = $DefaultUser }
-if ($NewUser -notmatch '^[a-z_][a-z0-9_-]{0,31}$') { throw "Invalid username '$NewUser'." }
+if ($NewUser -cnotmatch '^[a-z_][a-z0-9_-]{0,31}$') { throw "Invalid username '$NewUser'." }
 if ($NewUser -eq 'root') { throw "Choose a non-root username." }
 
 $GeneratedPassword = $false

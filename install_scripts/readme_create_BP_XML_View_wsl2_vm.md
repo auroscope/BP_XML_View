@@ -1,6 +1,6 @@
 # BP_XML_View on WSL2: Provisioning Script
 
-`create_BP_XML_View_wsl2_vm.ps1` builds a new, hardened Ubuntu instance under WSL2 and deploys [BP_XML_View](https://github.com/auroscope/BP_XML_View) (a Flask application) in it, served by gunicorn and reachable from the host and the local network through WSL mirrored networking. It is based on `create_wsl2_ubuntu.ps1` (see `readme_wsl2_ubuntu_sandbox.md` for the shared SSH and hardening details) and adds the application deployment, its firewall rules and an optional keep-alive task.
+`create_BP_XML_View_wsl2_vm.ps1` builds a new, hardened Ubuntu instance under WSL2 and deploys [BP_XML_View](https://github.com/auroscope/BP_XML_View) (a Flask application) in it, served by gunicorn and reachable from the host and the local network through WSL mirrored networking. It is based on `create_wsl2_ubuntu_sandbox.ps1` (see `readme_wsl2_ubuntu_sandbox.md` for the shared SSH and hardening details) and adds the application deployment, its firewall rules and an optional keep-alive task.
 
 The script is interactive. It creates a **new** instance and never modifies an existing one; deleting old instances is opt-in and needs a typed confirmation.
 

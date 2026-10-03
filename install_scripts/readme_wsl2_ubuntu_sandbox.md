@@ -1,6 +1,6 @@
 # WSL2 Ubuntu Sandbox Provisioning Script
 
-`create_wsl2_ubuntu.ps1` builds a new, hardened Ubuntu instance under WSL2 and exposes it over SSH on the host's network using WSL mirrored networking. It is interactive, opt-in for anything destructive, and designed so existing WSL instances are never modified unless you explicitly choose to delete them.
+`create_wsl2_ubuntu_sandbox.ps1` builds a new, hardened Ubuntu instance under WSL2 and exposes it over SSH on the host's network using WSL mirrored networking. It is interactive, opt-in for anything destructive, and designed so existing WSL instances are never modified unless you explicitly choose to delete them.
 
 ## Contents
 
@@ -42,18 +42,18 @@
 The script can live in any folder. From an elevated PowerShell, change to that folder and run:
 
 ```powershell
-powershell.exe -NoExit -ExecutionPolicy Bypass -File .\create_wsl2_ubuntu.ps1
+powershell.exe -NoExit -ExecutionPolicy Bypass -File .\create_wsl2_ubuntu_sandbox.ps1
 ```
 
 Or use the full path to the script:
 
 ```powershell
-powershell.exe -NoExit -ExecutionPolicy Bypass -File "<path-to-script>\create_wsl2_ubuntu.ps1"
+powershell.exe -NoExit -ExecutionPolicy Bypass -File "<path-to-script>\create_wsl2_ubuntu_sandbox.ps1"
 ```
 
 The same command works as a desktop shortcut target. In that case use the full path, and set the shortcut to run as administrator (Properties > Shortcut > Advanced).
 
-`-ExecutionPolicy Bypass` applies to that one process only and does not change the machine's policy. If the script was downloaded or copied from another machine, you may also need `Unblock-File .\create_wsl2_ubuntu.ps1`.
+`-ExecutionPolicy Bypass` applies to that one process only and does not change the machine's policy. If the script was downloaded or copied from another machine, you may also need `Unblock-File .\create_wsl2_ubuntu_sandbox.ps1`.
 
 ## Prompts and defaults
 

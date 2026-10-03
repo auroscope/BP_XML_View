@@ -1,6 +1,6 @@
 # Hardened WSL2 Ubuntu + SSH provisioning script
 # Run from an elevated PowerShell. Shortcut target:
-#   C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -ExecutionPolicy Bypass -File "<path-to-script>\create_wsl2_ubuntu.ps1"
+#   C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -ExecutionPolicy Bypass -File "<path-to-script>\create_wsl2_ubuntu_sandbox.ps1"
 
 $ErrorActionPreference = 'Stop'
 
@@ -157,7 +157,7 @@ $HyperVRuleName = "WSL2 $DistroName SSH Server (TCP $SshPort, Hyper-V)"
 
 $NewUser =Read-Host "Linux username [$DefaultUser]"
 if ([string]::IsNullOrWhiteSpace($NewUser)) { $NewUser = $DefaultUser }
-if ($NewUser -notmatch '^[a-z_][a-z0-9_-]{0,31}$') { throw "Invalid username '$NewUser'." }
+if ($NewUser -cnotmatch '^[a-z_][a-z0-9_-]{0,31}$') { throw "Invalid username '$NewUser'." }
 if ($NewUser -eq 'root') { throw "Choose a non-root username." }
 
 $GeneratedPassword = $false
@@ -292,7 +292,7 @@ if ($PubKey) {
 }
 
 $SshdDropIn = @"
-# Managed by create_wsl2_ubuntu_secure.ps1
+# Managed by create_wsl2_ubuntu_sandbox.ps1
 Port $SshPort
 PermitRootLogin no
 AllowUsers $NewUser
