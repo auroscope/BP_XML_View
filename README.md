@@ -74,6 +74,7 @@ The [`install_scripts/`](install_scripts/) directory contains automations that i
 * They are **interactive**: instance name, ports, user name, password and firewall scope are all prompted for, with sensible defaults. Passwords are never stored in the script.
 * They create a **new** WSL instance and **never modify an existing one**. Deleting old instances is opt-in and needs the exact instance name typed to confirm.
 * They need only the script file itself, not the whole repository; the application scripts clone it for you.
+* They run a **preflight check** first: Windows 11 22H2 or later, and WSL 2.4.4 or later. If WSL is missing or too old they offer to install or update it. **A reboot may be required**; if so the script stops, you restart Windows, and you run it again.
 * If a script was downloaded or copied from another machine, you may first need to unblock it: `Unblock-File .\<script>.ps1`.
 
 ### Quick start
@@ -82,7 +83,7 @@ The [`install_scripts/`](install_scripts/) directory contains automations that i
 ```powershell
 powershell.exe -NoExit -ExecutionPolicy Bypass -File .\create_BP_XML_View_wsl2_vm.ps1
 ```
-`-ExecutionPolicy Bypass` applies to that one process only. To launch from File Explorer instead, see the script's guide.
+`-ExecutionPolicy Bypass` applies to that one process only. To launch it from a desktop shortcut or the right-click menu instead, see [`win_powershell_shortcut_how-to.md`](install_scripts/win_powershell_shortcut_how-to.md).
 
 **Existing Ubuntu system:** run as your normal sudo user (not as root):
 ```bash
