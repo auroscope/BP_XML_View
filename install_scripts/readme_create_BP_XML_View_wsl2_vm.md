@@ -37,7 +37,7 @@ The script is interactive. It creates a **new** instance and never modifies an e
 | Item | Requirement |
 |---|---|
 | OS | Windows 11. The Hyper-V firewall step needs 22H2 or later and is skipped with a warning otherwise. |
-| WSL | Recent WSL 2 (`wsl --version`). `wsl --install --name` needs roughly 2.4.4 or later. Run `wsl --update` if install fails. |
+| WSL | WSL 2 version 2.4.4 or later (`wsl --version`); `wsl --install --name` needs it. On a PC with no WSL, or an older one, the script's preflight check offers to install or update it (`wsl --install --no-distribution` / `wsl --update`). **A reboot may be required**; if so the script stops and asks you to restart Windows and run it again. |
 | Shell | Windows PowerShell 5.1, **elevated** (the script throws if not Administrator). |
 | Network | Internet access to the Ubuntu image, apt, GitHub and PyPI. The repository must remain public, as the script has no credential handling. |
 | Virtualisation | Enabled in firmware and Windows. |
@@ -75,6 +75,8 @@ Press Enter to accept a default. Prompts appear in this order.
 | Public key file | `%USERPROFILE%\.ssh\id_ed25519.pub` | If missing, SSH is password-only. |
 | Install ODBC Driver 18 | **No** | BP_XML_View does not need it. |
 | Create keep-alive scheduled task | **No** | See [Keeping the instance running](#keeping-the-instance-running). |
+| Install/update WSL now | Yes | Only asked if WSL is missing or older than 2.4.4. Declining lets you continue anyway, but the install step will probably fail. |
+| Continue anyway (Windows build older than 22H2) | No | Only asked on builds below 22621, where mirrored networking and the Hyper-V firewall are unsupported. |
 | Run `wsl --shutdown` now | Yes | Only asked if `.wslconfig` actually changed. |
 
 The defaults (`$BaseDistro`, `$DefaultName`, `$RepoUrl`, `$Branch`, `$DefaultAppPort`, `$DefaultUser`, `$PubKeyDefault`) are at the top of the script.
@@ -83,6 +85,7 @@ The defaults (`$BaseDistro`, `$DefaultName`, `$RepoUrl`, `$Branch`, `$DefaultApp
 
 | Step | Action |
 |---|---|
+| Preflight | Checks the Windows build (22H2 or later) and the WSL version. Offers to install or update WSL; if that needs a reboot, the script stops and asks you to restart Windows and run it again. Nothing else has been changed at that point. |
 | 0 | Interactive setup (above). |
 | 1 | Prints the plan. |
 | 2 | Ensures `networkingMode=mirrored` in `.wslconfig`, preserving other settings. Offers `wsl --shutdown` only if the file changed (stops all running distros without modifying them). |
@@ -185,6 +188,7 @@ To open a shell in the instance as the user: `wsl -d <name> -u <user>`.
 | Symptom | Likely cause and fix |
 |---|---|
 | Script ends with "did not respond on port ..." | Read the journal it prints, or `journalctl -u bp_xml_view`. Common causes: Python older than the project needs (the deploy step warns about this), a dependency failure, or a port clash inside the instance. |
+| Script stopped after the preflight and asked you to restart Windows | WSL was just installed or updated and is not usable until a reboot. Restart Windows and run the script again. |
 | `wsl --install --name failed` | WSL is too old. Run `wsl --update` and retry. Nothing existing has been modified. |
 | `git clone` fails | No internet or GitHub access from the instance, a proxy, or the repository is no longer public. |
 | `pip install` fails | PyPI unreachable, or a package needs a newer Python. Check the pip output. |

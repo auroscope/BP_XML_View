@@ -89,6 +89,74 @@ function New-RandomPassword([int]$Length = 24) {
 }
 
 # =========================================================
+# --- Preflight: Windows build and WSL (installed and recent enough?) ---
+$MinWslVersion = [version]'2.4.4'    # 'wsl --install --name' needs roughly this version or later
+$MinWinBuild   = 22621               # Windows 11 22H2: mirrored networking and Hyper-V firewall
+
+function Get-WslVersion {
+    # Returns the installed WSL version, or $null if WSL is missing or too old to report one.
+    $old = [Console]::OutputEncoding
+    $out = $null
+    try {
+        [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
+        $out = & wsl.exe --version
+        if ($LASTEXITCODE -ne 0) { $out = $null }
+    } catch {
+        $out = $null
+    } finally {
+        [Console]::OutputEncoding = $old
+    }
+    foreach ($line in @($out)) {
+        $clean = ("$line" -replace "`0", '').Trim()
+        if ($clean -match '^[^:]+:\s*(\d+\.\d+\.\d+(\.\d+)?)\s*$') { return [version]$Matches[1] }
+    }
+    return $null
+}
+
+function Test-PendingReboot {
+    $keys = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending',
+            'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired'
+    foreach ($k in $keys) { if (Test-Path $k) { return $true } }
+    return $false
+}
+
+Write-Host "=== Preflight: Windows and WSL ===" -ForegroundColor Cyan
+$WinBuild = [int](Get-CimInstance Win32_OperatingSystem).BuildNumber
+if ($WinBuild -lt $MinWinBuild) {
+    Write-Host "[!] Windows build $WinBuild is older than $MinWinBuild (Windows 11 22H2). Mirrored networking and the Hyper-V firewall are not supported, so this script's networking will not work." -ForegroundColor Yellow
+    if ((Read-Host "Continue anyway? (y/N)") -notmatch '^[yY]$') { exit 1 }
+}
+
+$WslVer = Get-WslVersion
+if ($WslVer -and $WslVer -ge $MinWslVersion) {
+    Write-Host "[+] WSL $WslVer is installed (minimum $MinWslVersion)." -ForegroundColor Green
+} else {
+    $WslState = if ($WslVer) { "version $WslVer, older than the required $MinWslVersion" } else { "not installed" }
+    Write-Host "[!] WSL is $WslState." -ForegroundColor Yellow
+    Write-Host "[!] Installing or updating WSL may require a REBOOT before this script can continue." -ForegroundColor Yellow
+    $FixWsl = Read-Host "Install/update WSL now? (Y/n)"
+    if ($FixWsl -match '^[nN]$') {
+        Write-Host "[!] Continuing without a current WSL: the install step will probably fail, and if WSL was only just enabled a reboot is required before it works." -ForegroundColor Yellow
+        if ((Read-Host "Continue anyway? (y/N)") -notmatch '^[yY]$') { exit 1 }
+    } else {
+        if ($WslVer) { wsl.exe --update } else { wsl.exe --install --no-distribution }
+        if ($LASTEXITCODE -ne 0) { Write-Host "[!] WSL setup returned exit code $LASTEXITCODE." -ForegroundColor Yellow }
+        $WslVer = Get-WslVersion
+        if ($WslVer -and $WslVer -ge $MinWslVersion) {
+            Write-Host "[+] WSL is now version $WslVer." -ForegroundColor Green
+            if (Test-PendingReboot) {
+                Write-Host "[!] Windows reports a pending reboot. If a later step fails, restart Windows and run this script again." -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "[!] WSL has been installed or updated but is not usable yet." -ForegroundColor Yellow
+            Write-Host "[!] RESTART WINDOWS now, then run this script again. Nothing else has been changed." -ForegroundColor Yellow
+            Read-Host -Prompt "`nPress ENTER to close this window"
+            exit 0
+        }
+    }
+}
+
+# =========================================================
 Write-Host "=== 0. Interactive Setup ===" -ForegroundColor Cyan
 
 # --- Existing instances: list them and optionally delete (opt-in, nothing is removed by default) ---

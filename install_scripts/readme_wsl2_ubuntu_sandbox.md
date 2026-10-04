@@ -31,7 +31,7 @@
 | Item | Requirement |
 |---|---|
 | OS | Windows 11. The Hyper-V firewall step needs 22H2 or later and is skipped with a warning otherwise. |
-| WSL | Recent WSL 2 (`wsl --version`). `wsl --install --name` needs roughly 2.4.4 or later. Run `wsl --update` if install fails. |
+| WSL | WSL 2 version 2.4.4 or later (`wsl --version`); `wsl --install --name` needs it. On a PC with no WSL, or an older one, the script's preflight check offers to install or update it (`wsl --install --no-distribution` / `wsl --update`). **A reboot may be required**; if so the script stops and asks you to restart Windows and run it again. |
 | Shell | Windows PowerShell 5.1, **elevated** (the script throws if not Administrator). |
 | Network | Internet access for the Ubuntu image, apt, and (optionally) packages.microsoft.com. |
 | Virtualisation | Enabled in firmware and Windows (WSL2 working). |
@@ -68,6 +68,8 @@ Prompts appear in this order. Pressing Enter accepts the default.
 | Password | blank = generate | Entered as a secure string and confirmed. A generated 24-character password is shown once at the end. Warns below 12 characters. |
 | Public key file | `%USERPROFILE%\.ssh\id_ed25519.pub` | If missing, key login is skipped and only password login is configured. |
 | Install ODBC Driver 18 | Yes | Declining skips step 6b entirely. |
+| Install/update WSL now | Yes | Only asked if WSL is missing or older than 2.4.4. Declining lets you continue anyway, but the install step will probably fail. |
+| Continue anyway (Windows build older than 22H2) | No | Only asked on builds below 22621, where mirrored networking and the Hyper-V firewall are unsupported. |
 | Run `wsl --shutdown` now | Yes | Only asked if `.wslconfig` actually changed. |
 
 The defaults live at the top of the script (`$BaseDistro`, `$DefaultName`, `$DefaultUser`, `$PubKeyDefault`).
@@ -76,6 +78,7 @@ The defaults live at the top of the script (`$BaseDistro`, `$DefaultName`, `$Def
 
 | Step | Action |
 |---|---|
+| Preflight | Checks the Windows build (22H2 or later) and the WSL version. Offers to install or update WSL; if that needs a reboot, the script stops and asks you to restart Windows and run it again. Nothing else has been changed at that point. |
 | 0 | Interactive setup: list and optionally delete instances, then collect name, port, user, password, key and ODBC choice. |
 | 1 | Prints the plan. |
 | 2 | Ensures `networkingMode=mirrored` under `[wsl2]` in `.wslconfig` while preserving other settings. If a change is made, offers `wsl --shutdown` (this stops all running distros, but does not modify them). |
@@ -174,6 +177,7 @@ The password is held as a plain string in the PowerShell process while the scrip
 | Symptom | Likely cause and fix |
 |---|---|
 | Script exits immediately with "must be run as Administrator" | Relaunch PowerShell elevated. |
+| Script stopped after the preflight and asked you to restart Windows | WSL was just installed or updated and is not usable until a reboot. Restart Windows and run the script again. |
 | `wsl --install --name failed` | WSL is too old. Run `wsl --update` and retry. Nothing existing has been modified at that point. |
 | "not registered after install" | Check `wsl --list --verbose`. If the instance exists under a different name, re-run with that name or remove it. |
 | SSH to the host's LAN IP fails from the host | Expected; use `127.0.0.1` (see [Connecting](#connecting)). |
