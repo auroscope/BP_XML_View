@@ -1,5 +1,11 @@
 # BP_XML_View (Best Practice Software XML Viewer)
 
+> [!IMPORTANT]
+> **This project is no longer maintained.** Development continues at
+> [auroscope/xml_curator_for_BP_MD](https://github.com/auroscope/xml_curator_for_BP_MD), which keeps all of
+> BP_XML_View's features and adds PDF/RTF shrinking, document details editing, OCR and MedicalDirector support.
+> Please use that project for new installs.
+
 BP_XML_View is a lightweight, high-performance Python Flask application designed to parse, display, manage, and edit patient Electronic Health Record (EHR) XML payloads exported from **Best Practice Software (BPSEHRV2)**. 
 
 The application utilizes a secure, serverless file-based approach. It treats the uploaded patient XML files themselves as the primary data store, dynamically parsing and writing modifications directly back to the files. It handles complex healthcare datasets, dynamic binary extraction from base64 ZIP archives, RTF parsing into clean HTML tables, image conversions (TIF to browser-renderable formats), and clinical observations visualization.
